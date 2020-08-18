@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => (
             allowNull:true,
         },
     }, {
-        timestamp:true,
+        timestamp:true,//createAt, updataAt, deleteAt 자동 생성
         paranoid:true,
     })
 );

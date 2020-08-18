@@ -3,14 +3,14 @@ const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const path = require('path');
 const session = require('express-session');
-const flash = require('connect-flash');
+const flash = require('connect-flash');//휘발성임
 require('dotenv').config();
 
 const pageRouter = require('./routes/page');
-const {sequelize} = require('./models');
+const {sequelize} = require('./models');//디비와 서버 연결
 
 const app = express();
-sequelize.sync();
+sequelize.sync();//시퀄라이즈 실행
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
