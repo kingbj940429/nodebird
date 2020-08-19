@@ -14,6 +14,7 @@ const userRouter = require('./routes/user');
 
 
 const {sequelize} = require('./models');//디비와 서버 연결 require('./models')에서 index.js은 생략가능하다. 즉 './models' == './models/index.js'
+//var sequelize = require('./models/index').sequelize; 이것도 가능
 const passprotConfig = require('./passport');
 
 const app = express();
