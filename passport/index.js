@@ -9,11 +9,22 @@ module.exports = (passport) => {
     });//user.id는 사용자의 아이디만 저장하라고 명령한 것.
 
     passport.deserializeUser((id,done)=>{//serializeUser에서 세션에 저장했던 아이디를 받아 디비에서 사용자 정보를 조회
-        User.findOne({where:{id}})
+        User.findOne({
+            where:{id},
+            include: [{
+                model:User,
+                attributes:['id','nick'],
+                as:'Followers',
+            },{
+                model: User,
+                attributes:['id','nick'],
+                as :'Followings',
+            }],
+        })
             .then(user=>done(null,user))
             .catch(err=>done(err));
     });
 
     local(passport);
     kakao(passport);
-}
+};
