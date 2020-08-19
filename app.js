@@ -4,13 +4,16 @@ const morgan = require('morgan');
 const path = require('path');
 const session = require('express-session');
 const flash = require('connect-flash');//휘발성임
+const passport = require('passport');
 require('dotenv').config();
 
 const pageRouter = require('./routes/page');
-const {sequelize} = require('./models');//디비와 서버 연결
+const {sequelize} = require('./models');//디비와 서버 연결 require('./models')에서 index.js은 생략가능하다. 즉 './models' == './models/index.js'
+const passprotConfig = require('./passport');
 
 const app = express();
 sequelize.sync();//시퀄라이즈 실행
+passprotConfig(passport);
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -31,6 +34,8 @@ app.use(session({
   },
 }));
 app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', pageRouter);
 
