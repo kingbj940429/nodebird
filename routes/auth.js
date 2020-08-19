@@ -14,7 +14,7 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
       req.flash('joinError', '이미 가입된 이메일입니다.');
       return res.redirect('/join');
     }
-    const hash = await bcrypt.hash(password, 12);
+    const hash = await bcrypt.hash(password, 12);//bcypt는 암호화 관련 모듈 뒤에 12는 반복 횟수임 높을수록 해독이 어렵지만 느림 최고31임.
     await User.create({
       email,
       nick,
@@ -28,7 +28,7 @@ router.post('/join', isNotLoggedIn, async (req, res, next) => {
 });
 
 router.post('/login', isNotLoggedIn, (req, res, next) => {
-  passport.authenticate('local', (authError, user, info) => {
+  passport.authenticate('local', (authError, user, info) => {//미들웨어인데 미들웨어 안에 또있다.
     if (authError) {
       console.error(authError);
       return next(authError);
@@ -47,7 +47,7 @@ router.post('/login', isNotLoggedIn, (req, res, next) => {
   })(req, res, next); // 미들웨어 내의 미들웨어에는 (req, res, next)를 붙입니다.
 });
 
-router.get('/logout', isLoggedIn, (req, res) => {
+router.get('/logout', isLoggedIn, (req, res) => {//로그아웃 객체
   req.logout();
   req.session.destroy();
   res.redirect('/');

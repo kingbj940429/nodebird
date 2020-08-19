@@ -8,6 +8,9 @@ const passport = require('passport');
 require('dotenv').config();
 
 const pageRouter = require('./routes/page');
+const authRouter = require('./routes/auth');
+
+
 const {sequelize} = require('./models');//디비와 서버 연결 require('./models')에서 index.js은 생략가능하다. 즉 './models' == './models/index.js'
 const passprotConfig = require('./passport');
 
@@ -38,6 +41,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', pageRouter);
+app.use('/auth',authRouter);
 
 app.use((req, res, next) => {
   const err = new Error('Not Found');
