@@ -5,6 +5,8 @@ const path = require('path');
 const session = require('express-session');
 const flash = require('connect-flash');//휘발성임
 const passport = require('passport');
+const helmet = require('helmet');
+const hpp = require('hpp');
 require('dotenv').config();
 
 const pageRouter = require('./routes/page');
@@ -16,6 +18,7 @@ const userRouter = require('./routes/user');
 const {sequelize} = require('./models');//디비와 서버 연결 require('./models')에서 index.js은 생략가능하다. 즉 './models' == './models/index.js'
 //var sequelize = require('./models/index').sequelize; 이것도 가능
 const passprotConfig = require('./passport');
+const logger = require('./logger');
 
 const app = express();
 sequelize.sync();//시퀄라이즈 실행
@@ -25,21 +28,32 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.set('port', process.env.PORT || 8001);
 
-app.use(morgan('dev'));
+if(process.env.NODE_ENV == 'production'){
+  app.use(morgan('combined'));
+  app.use(helmet());
+  app.use(hpp());
+}else{
+  app.use(morgan('dev'));
+}
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/img', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
-app.use(session({
-  resave: false,
+const sessionOption = {
+  resave : false,
   saveUninitialized: false,
   secret: process.env.COOKIE_SECRET,
-  cookie: {
+  cookie : {
     httpOnly: true,
     secure: false,
   },
-}));
+};
+if(process.env.NODE_ENV === 'production'){
+  sessionOption.proxy = true;
+}
+app.use(session(sessionOption));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
@@ -52,6 +66,8 @@ app.use('/user',userRouter);
 app.use((req, res, next) => {
   const err = new Error('Not Found');
   err.status = 404;
+  logger.info('hello');
+  logger.error(err.message);
   next(err);
 });
 
